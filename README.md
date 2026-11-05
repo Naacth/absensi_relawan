@@ -1,24 +1,20 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="300" alt="Laravel Logo">
-</p>
+<div align="center">
 
-<h1 align="center">
-  Sistem Absensi & Payroll Relawan SPPG Curug Cukanggalih 02
-</h1>
+<img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="280" alt="Laravel Logo">
 
-<p align="center">
-  <strong>Aplikasi Web Absensi Multi-Lapis (Verifikasi Wajah, Geofencing Haversine, Timestamp Server) & Penggajian Otomatis</strong>
-</p>
+# Sistem Absensi & Payroll Relawan SPPG Curug Cukanggalih 02
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12">
-  <img src="https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2+">
-  <img src="https://img.shields.io/badge/MySQL-9.x-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL">
-  <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap 5">
-  <img src="https://img.shields.io/badge/ARSA%20Face%20API-Ready-00C49F?style=for-the-badge" alt="ARSA Face API">
-  <img src="https://img.shields.io/badge/Fonnte%20WA%20API-Ready-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="Fonnte WA API">
-  <img src="https://img.shields.io/badge/Shared%20Hosting-Hostinger%20Ready-673AB7?style=for-the-badge" alt="Hostinger Ready">
-</p>
+**Aplikasi Web Absensi Multi-Lapis (Verifikasi Wajah, Geofencing Haversine, Timestamp Server) & Penggajian Otomatis**
+
+[![Laravel 12](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP 8.2+](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![MySQL 9.x](https://img.shields.io/badge/MySQL-9.x-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![Bootstrap 5.3](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
+[![ARSA Face API](https://img.shields.io/badge/ARSA%20Face%20API-Ready-00C49F?style=for-the-badge)](https://arsa.ai)
+[![Fonnte WA API](https://img.shields.io/badge/Fonnte%20WA%20API-Ready-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://fonnte.com)
+[![Hostinger](https://img.shields.io/badge/Shared%20Hosting-Hostinger%20Ready-673AB7?style=for-the-badge)](https://hostinger.co.id)
+
+</div>
 
 ---
 
@@ -27,11 +23,11 @@
 2. [Latar Belakang & Masalah](#-latar-belakang--masalah)
 3. [Fitur Unggulan](#-fitur-unggulan)
 4. [Arsitektur Keamanan Multi-Lapis](#-arsitektur-keamanan-multi-lapis)
-5. [Skema Perhitungan Payroll](#-skema-perhitungan-payroll)
+5. [Rumus Geofencing Haversine](#-rumus-geofencing-haversine)
 6. [Hak Akses Pengguna (RBAC)](#-hak-akses-pengguna-rbac)
 7. [Akun Bawaan (Default Credentials)](#-akun-bawaan-default-credentials)
 8. [Panduan Instalasi & Menjalankan](#-panduan-instalasi--menjalankan)
-9. [Struktur Database & Direktori](#-struktur-database--direktori)
+9. [Struktur Direktori Utama](#-struktur-direktori-utama)
 10. [Nilai Akademis (Sempro & Jurnal)](#-nilai-akademis-sempro--jurnal)
 
 ---
@@ -59,43 +55,43 @@ Sistem ini didesain khusus agar dapat dijalankan dengan efisien di lingkungan **
 ## ✨ Fitur Unggulan
 
 ### 1. 🛡️ Absensi 4 Lapis Keamanan
-- **WebRTC Camera API**: Pengambilan foto langsung dari kamera browser tanpa perantara upload file statis.
-- **Toggle Flip / Mirror**: Opsi tampilan kamera normal (tidak mirror) atau mode cermin dengan memori preferensi `localStorage`.
-- **HTML5 Geolocation**: Mengunci koordinat latitude dan longitude relawan secara real-time.
-- **Geofencing Haversine**: Mengukur jarak eksak (meter) ke pusat SPPG Curug Cukanggalih 02 (`-6.262500, 106.564700`).
-- **Liveness & Face Verification**: Menguji keaslian wajah dan kecocokan biometrik terhadap wajah terdaftar.
-- **Watermark Otomatis Server-Side**: Menggabungkan data identitas, waktu server, dan koordinat ke foto bukti absensi secara permanen.
+* **WebRTC Camera API**: Pengambilan foto langsung dari kamera browser tanpa perantara upload file statis.
+* **Toggle Flip / Mirror**: Opsi tampilan kamera normal (tidak mirror) atau mode cermin dengan memori preferensi `localStorage`.
+* **HTML5 Geolocation**: Mengunci koordinat latitude dan longitude relawan secara real-time.
+* **Geofencing Haversine**: Mengukur jarak eksak (meter) ke pusat SPPG Curug Cukanggalih 02 (`-6.262500, 106.564700`).
+* **Liveness & Face Verification**: Menguji keaslian wajah dan kecocokan biometrik terhadap wajah terdaftar.
+* **Watermark Otomatis Server-Side**: Menggabungkan data identitas, waktu server, dan koordinat ke foto bukti absensi secara permanen.
 
 ### 2. 💰 Penggajian & Payroll Otomatis (DSS)
-- **Kalkulasi Jam Kerja Eksak**: Total jam kerja dihitung desimal presisi dari selisih `check_in_at` dan `check_out_at`.
-- **Master Skema Honor Dinamis**:
-  - Honor jam kerja (`total_hours × tarif_per_jam`)
-  - Uang transport kehadiran sah per hari
-  - Uang makan harian (untuk kehadiran $\ge$ 6 jam)
-  - Insentif lembur (kelebihan jam kerja > 8 jam/hari)
-  - Potongan keterlambatan
-- **Persetujuan Berjenjang (Draft &rarr; Approved &rarr; Paid)**.
-- **Cetak Slip Gaji PDF Resmi**: Dibuat via `DomPDF` siap cetak/unduh.
-- **Ekspor Excel / CSV**: Format kompatibel untuk pelaporan kas daerah atau transfer bank kolektif.
+* **Kalkulasi Jam Kerja Eksak**: Total jam kerja dihitung desimal presisi dari selisih `check_in_at` dan `check_out_at`.
+* **Master Skema Honor Dinamis**:
+  * Honor jam kerja (`total_hours × tarif_per_jam`)
+  * Uang transport kehadiran sah per hari
+  * Uang makan harian (untuk kehadiran $\ge$ 6 jam)
+  * Insentif lembur (kelebihan jam kerja > 8 jam/hari)
+  * Potongan keterlambatan
+* **Persetujuan Berjenjang (Draft &rarr; Approved &rarr; Paid)**.
+* **Cetak Slip Gaji PDF Resmi**: Dibuat via `DomPDF` siap cetak/unduh.
+* **Ekspor Excel / CSV**: Format kompatibel untuk pelaporan kas daerah atau transfer bank kolektif.
 
 ### 3. 🏢 Manajemen Divisi & Jadwal Fleksibel
-- Relawan terorganisir per divisi: **Pengolahan**, **Distribusi**, dan **Administrasi**.
-- Jam operasional masuk, batas akhir masuk, dan batas jam pulang dapat diatur berbeda untuk tiap divisi per hari (Senin–Sabtu).
-- Pengaturan toleransi keterlambatan dalam menit.
+* Relawan terorganisir per divisi: **Pengolahan**, **Distribusi**, dan **Administrasi**.
+* Jam operasional masuk, batas akhir masuk, dan batas jam pulang dapat diatur berbeda untuk tiap divisi per hari (Senin–Sabtu).
+* Pengaturan toleransi keterlambatan dalam menit.
 
 ### 4. 📝 Pengajuan Izin / Sakit / Cuti Online
-- Relawan mengunggah surat dokter / bukti pendukung langsung dari dashboard.
-- Pengurus dapat menyetujui (*Approve*) atau menolak (*Reject*) dengan catatan.
-- Izin sah tidak dihitung *alpha* (mangkir) pada laporan rekapitulasi penggajian.
+* Relawan mengunggah surat dokter / bukti pendukung langsung dari dashboard.
+* Pengurus dapat menyetujui (*Approve*) atau menolak (*Reject*) dengan catatan.
+* Izin sah tidak dihitung *alpha* (mangkir) pada laporan rekapitulasi penggajian.
 
 ### 5. 📲 WhatsApp Gateway Terintegrasi (Fonnte API)
-- Notifikasi otomatis penerbitan slip honorarium saat payroll disetujui.
-- Pengingat absensi H-15 menit sebelum batas waktu masuk berakhir.
-- Peringatan instan (*Fraud Alert*) ke WhatsApp Admin jika terdeteksi 3x kegagalan berturut-turut.
+* Notifikasi otomatis penerbitan slip honorarium saat payroll disetujui.
+* Pengingat absensi H-15 menit sebelum batas waktu masuk berakhir.
+* Peringatan instan (*Fraud Alert*) ke WhatsApp Admin jika terdeteksi 3x kegagalan berturut-turut.
 
 ### 6. 🔍 Deteksi Anomali & Kecurangan (Fraud Detection)
-- Memantau penggunaan IP Address ganda untuk relawan berbeda dalam rentang waktu singkat.
-- Mencatat seluruh log percobaan gagal lengkap dengan alasan (*out_of_radius*, *face_mismatch*, *outside_schedule*, dll).
+* Memantau penggunaan IP Address ganda untuk relawan berbeda dalam rentang waktu singkat.
+* Mencatat seluruh log percobaan gagal lengkap dengan alasan (*out_of_radius*, *face_mismatch*, *outside_schedule*, dll).
 
 ---
 
@@ -132,10 +128,21 @@ Sistem ini didesain khusus agar dapat dijalankan dengan efisien di lingkungan **
    └── Hitung Total Jam, Transport, Uang Makan ──> Terbitkan Slip PDF & Notif WA
 ```
 
-### Rumus Geofencing (Haversine Formula)
+---
+
+## 🧮 Rumus Geofencing Haversine
+
 Jarak lengkung bumi dihitung langsung di backend menggunakan formula:
-$$d = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta\lambda}{2}\right)}\right)$$
-*Keterangan: $r = 6.371.000\text{ m}$ (radius bumi), $\phi = \text{latitude}$, $\lambda = \text{longitude}$.*
+
+```math
+d = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta\lambda}{2}\right)}\right)
+```
+
+> **Keterangan:**
+> - $r = 6.371.000\text{ meter}$ (jari-jari bumi)
+> - $\phi_1, \phi_2$ = Latitude titik awal dan titik tujuan (dalam radian)
+> - $\Delta\phi$ = Selisih latitude $(\phi_2 - \phi_1)$
+> - $\Delta\lambda$ = Selisih longitude $(\lambda_2 - \lambda_1)$
 
 ---
 
@@ -176,25 +183,26 @@ Semua akun berikut sudah di-seed otomatis ke dalam database:
 ## 🛠️ Panduan Instalasi & Menjalankan
 
 ### Prasyarat Sistem
-- PHP $\ge$ 8.2 (dengan ekstensi `pdo_mysql`, `gd`, `fileinfo`, `curl`, `mbstring`)
-- Composer $\ge$ 2.x
-- MySQL Server $\ge$ 8.0 atau 9.x
-- Browser modern (Chrome, Edge, Firefox) dengan izin Kamera dan Lokasi
+* PHP $\ge$ 8.2 (dengan ekstensi `pdo_mysql`, `gd`, `fileinfo`, `curl`, `mbstring`)
+* Composer $\ge$ 2.x
+* MySQL Server $\ge$ 8.0 atau 9.x
+* Browser modern (Chrome, Edge, Firefox) dengan izin Kamera dan Lokasi
 
 ### Langkah Setup
 
 1. **Clone atau Buka Direktori Proyek**:
-   ```powershell
-   cd c:\Users\Nacht\Absensi_vermuk
+   ```bash
+   git clone https://github.com/Naacth/absensi_relawan.git
+   cd absensi_relawan
    ```
 
-2. **Pasang Dependensi**:
-   ```powershell
+2. **Pasang Dependensi PHP**:
+   ```bash
    composer install
    ```
 
 3. **Konfigurasi Environment (`.env`)**:
-   Pastikan konfigurasi database dan parameter SPPG sudah sesuai:
+   Salin file `.env.example` ke `.env`, lalu atur database Anda:
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -215,17 +223,17 @@ Semua akun berikut sudah di-seed otomatis ke dalam database:
    ```
 
 4. **Jalankan Migrasi & Seeder**:
-   ```powershell
+   ```bash
    php artisan migrate --seed
    ```
 
 5. **Hubungkan Storage Symlink**:
-   ```powershell
+   ```bash
    php artisan storage:link
    ```
 
 6. **Jalankan Server Lokal**:
-   ```powershell
+   ```bash
    php artisan serve
    ```
    Buka peramban di `http://127.0.0.1:8000`.
@@ -302,8 +310,6 @@ Aplikasi ini dirancang memenuhi kaidah rekayasa perangkat lunak dan metodologi p
 
 ---
 
-<p align="center">
+<div align="center">
   Dikembangkan untuk <strong>SPPG Curug Cukanggalih 02</strong> &bull; 2026
-</p>
-#   a b s e n s i _ r e l a w a n  
- 
+</div>
