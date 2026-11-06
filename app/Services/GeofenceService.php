@@ -44,8 +44,8 @@ class GeofenceService
      */
     public static function checkWithinRadius(float $userLat, float $userLng): array
     {
-        $sppgLat    = (float) Setting::get('sppg_latitude', config('services.sppg.latitude', -6.2625));
-        $sppgLng    = (float) Setting::get('sppg_longitude', config('services.sppg.longitude', 106.5647));
+        $sppgLat    = (float) Setting::get('sppg_latitude', config('services.sppg.latitude', -6.2577369));
+        $sppgLng    = (float) Setting::get('sppg_longitude', config('services.sppg.longitude', 106.5500299));
         $radiusM    = (float) Setting::get('geofence_radius', config('services.sppg.radius_meters', 100));
 
         $distance = static::calculateDistance($userLat, $userLng, $sppgLat, $sppgLng);

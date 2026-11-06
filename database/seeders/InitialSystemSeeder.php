@@ -16,9 +16,9 @@ class InitialSystemSeeder extends Seeder
     {
         // 1. Settings Awal
         $settings = [
-            ['key' => 'sppg_name',          'value' => 'SPPG Curug Cukanggalih 02', 'label' => 'Nama Instansi/SPPG'],
-            ['key' => 'sppg_latitude',      'value' => '-6.262500',                'label' => 'Latitude Lokasi SPPG'],
-            ['key' => 'sppg_longitude',     'value' => '106.564700',               'label' => 'Longitude Lokasi SPPG'],
+            ['key' => 'sppg_name',          'value' => 'SPPG CURUG (Drijaya Wahana Perkasa)', 'label' => 'Nama Instansi/SPPG'],
+            ['key' => 'sppg_latitude',      'value' => '-6.2577369',                          'label' => 'Latitude Lokasi SPPG'],
+            ['key' => 'sppg_longitude',     'value' => '106.5500299',                         'label' => 'Longitude Lokasi SPPG'],
             ['key' => 'geofence_radius',    'value' => '100',                      'label' => 'Radius Geofencing (meter)'],
             ['key' => 'arsa_api_key',       'value' => '',                         'label' => 'ARSA Face API Key'],
             ['key' => 'fonnte_api_token',   'value' => '',                         'label' => 'Fonnte WA API Token'],

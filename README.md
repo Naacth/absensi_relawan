@@ -58,7 +58,7 @@ Sistem ini didesain khusus agar dapat dijalankan dengan efisien di lingkungan **
 * **WebRTC Camera API**: Pengambilan foto langsung dari kamera browser tanpa perantara upload file statis.
 * **Toggle Flip / Mirror**: Opsi tampilan kamera normal (tidak mirror) atau mode cermin dengan memori preferensi `localStorage`.
 * **HTML5 Geolocation**: Mengunci koordinat latitude dan longitude relawan secara real-time.
-* **Geofencing Haversine**: Mengukur jarak eksak (meter) ke pusat SPPG Curug Cukanggalih 02 (`-6.262500, 106.564700`).
+* **Geofencing Haversine**: Mengukur jarak eksak (meter) ke pusat SPPG Curug Cukanggalih 02 (`-6.257737, 106.550030`).
 * **Liveness & Face Verification**: Menguji keaslian wajah dan kecocokan biometrik terhadap wajah terdaftar.
 * **Watermark Otomatis Server-Side**: Menggabungkan data identitas, waktu server, dan koordinat ke foto bukti absensi secara permanen.
 
@@ -212,9 +212,9 @@ Semua akun berikut sudah di-seed otomatis ke dalam database:
    DB_PASSWORD=your_password
 
    # Konfigurasi Geofencing & API
-   SPPG_NAME="SPPG Curug Cukanggalih 02"
-   SPPG_LATITUDE=-6.262500
-   SPPG_LONGITUDE=106.564700
+   SPPG_NAME="SPPG CURUG (Drijaya Wahana Perkasa)"
+   SPPG_LATITUDE=-6.257737
+   SPPG_LONGITUDE=106.550030
    GEOFENCE_RADIUS_METERS=100
 
    # Mode Dummy (Aman untuk Demo/Sidang tanpa internet/kuota API)

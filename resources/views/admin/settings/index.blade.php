@@ -31,11 +31,11 @@
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Latitude Titik SPPG</label>
-                            <input type="text" name="sppg_latitude" class="form-control" value="{{ old('sppg_latitude', $settings['sppg_latitude'] ?? '-6.262500') }}" required>
+                            <input type="text" name="sppg_latitude" class="form-control" value="{{ old('sppg_latitude', $settings['sppg_latitude'] ?? '-6.2577369') }}" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Longitude Titik SPPG</label>
-                            <input type="text" name="sppg_longitude" class="form-control" value="{{ old('sppg_longitude', $settings['sppg_longitude'] ?? '106.564700') }}" required>
+                            <input type="text" name="sppg_longitude" class="form-control" value="{{ old('sppg_longitude', $settings['sppg_longitude'] ?? '106.5500299') }}" required>
                         </div>
                     </div>
                     <div class="mb-3">
