@@ -63,8 +63,21 @@
     <tbody>
         <tr>
             <td class="text-center">1</td>
-            <td>Honor Pokok Jam Kerja</td>
-            <td class="text-center">{{ number_format($detail->total_hours, 1) }} Jam Kerja</td>
+            <td>
+                Honor Pokok
+                @if($detail->user->division && (float)$detail->user->division->daily_rate > 0)
+                    (Rp {{ number_format($detail->user->division->daily_rate, 0, ',', '.') }} × {{ $detail->total_days_attended }} hari hadir)
+                @else
+                    ({{ number_format($detail->total_hours, 1) }} jam kerja)
+                @endif
+            </td>
+            <td class="text-center">
+                @if($detail->user->division && (float)$detail->user->division->daily_rate > 0)
+                    {{ $detail->total_days_attended }} Hari Hadir
+                @else
+                    {{ number_format($detail->total_hours, 1) }} Jam Kerja
+                @endif
+            </td>
             <td class="text-right">{{ number_format($detail->base_salary, 0, ',', '.') }}</td>
         </tr>
         <tr>

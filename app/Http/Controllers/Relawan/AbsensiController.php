@@ -66,7 +66,17 @@ class AbsensiController extends Controller
         $schedule = $division ? $division->todaySchedule() : null;
         $jamSekarang = $serverNow->format('H:i:s');
 
-        if ($schedule) {
+        if (!$division) {
+            return $this->logAndFail($user, $type, $request,
+                'Anda belum ditempatkan ke divisi apapun. Hubungi Admin.',
+                'no_division'
+            );
+        }
+
+        // Cek validasi jadwal (bisa dimatikan via SCHEDULE_CHECK=false di .env untuk development/demo)
+        $scheduleCheckEnabled = env('SCHEDULE_CHECK', true);
+
+        if ($scheduleCheckEnabled && $schedule) {
             if ($type === 'in') {
                 if ($jamSekarang < $schedule->check_in_start || $jamSekarang > $schedule->check_in_end) {
                     $start = substr($schedule->check_in_start, 0, 5);
@@ -194,7 +204,7 @@ class AbsensiController extends Controller
             ->whereDate('created_at', today())
             ->count();
 
-        if ($recentFails >= 3) {
+        if ($recentFails === 3) {
             WhatsAppService::alertAdminAnomaly(
                 "Relawan *{$user->name}* ({$user->email}) mengalami kegagalan absensi {$recentFails}x hari ini.\nAlasan Terakhir: {$message}"
             );

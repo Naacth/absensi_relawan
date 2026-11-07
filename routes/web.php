@@ -20,7 +20,7 @@ Route::get('/', fn() => redirect()->route('login'));
 
 // ─── Auth ─────────────────────────────────────────────────────
 Route::get('/login',   [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login',  [AuthController::class, 'login'])->name('login.post');
+Route::post('/login',  [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // ─── Admin & Super Admin ──────────────────────────────────────
@@ -51,17 +51,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::patch('/izin/{leave}/reject',      [AdminLeave::class, 'reject'])->name('leave.reject');
 
     // Penggajian & Payroll Otomatis
-    Route::get('/payroll',                       [AdminPayroll::class, 'index'])->name('payroll.index');
-    Route::get('/payroll/generate',              [AdminPayroll::class, 'create'])->name('payroll.create');
-    Route::post('/payroll/generate',             [AdminPayroll::class, 'generate'])->name('payroll.generate');
-    Route::get('/payroll/{payroll}',             [AdminPayroll::class, 'show'])->name('payroll.show');
+    Route::get('/payroll',                        [AdminPayroll::class, 'index'])->name('payroll.index');
+    Route::get('/payroll/generate',               [AdminPayroll::class, 'create'])->name('payroll.create');
+    Route::post('/payroll/generate',              [AdminPayroll::class, 'generate'])->name('payroll.generate');
+    Route::get('/payroll/{payroll}',              [AdminPayroll::class, 'show'])->name('payroll.show');
     Route::patch('/payroll/{payroll}/approve',    [AdminPayroll::class, 'approve'])->name('payroll.approve');
     Route::patch('/payroll/{payroll}/mark-paid',  [AdminPayroll::class, 'markAsPaid'])->name('payroll.markPaid');
     Route::get('/payroll/{payroll}/export-csv',   [AdminPayroll::class, 'exportCsv'])->name('payroll.exportCsv');
-    Route::get('/payroll/slip/{detail}/pdf',     [AdminPayroll::class, 'slipPdf'])->name('payroll.slipPdf');
+    Route::get('/payroll/slip/{detail}/pdf',      [AdminPayroll::class, 'slipPdf'])->name('payroll.slipPdf');
 
     // Laporan Kehadiran Bulanan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
+    Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
 });
 
 // ─── Relawan ──────────────────────────────────────────────────
@@ -74,7 +76,7 @@ Route::prefix('relawan')->name('relawan.')->middleware(['auth', 'role:relawan'])
 
     // Absensi (Wajah + GPS Geofencing + Watermark)
     Route::get('/absensi',  [AbsensiController::class, 'index'])->name('absensi.index');
-    Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+    Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store')->middleware('throttle:10,1');
 
     // Pengajuan Izin / Sakit
     Route::get('/izin',        [RelawanLeave::class, 'index'])->name('leave.index');

@@ -28,29 +28,36 @@ class InitialSystemSeeder extends Seeder
             Setting::updateOrCreate(['key' => $s['key']], $s);
         }
 
-        // 2. Divisi
-        $divPengolahan = Division::firstOrCreate(['name' => 'Divisi Pengolahan'], ['description' => 'Operasional produksi dan pengolahan pangan']);
-        $divDistribusi = Division::firstOrCreate(['name' => 'Divisi Distribusi'], ['description' => 'Penyaluran dan logistik pangan']);
-        $divAdmin      = Division::firstOrCreate(['name' => 'Divisi Administrasi'], ['description' => 'Pendataan, inventaris, dan administrasi']);
+        // 2. Divisi (dengan daily_rate default)
+        $divPengolahan = Division::updateOrCreate(
+            ['name' => 'Divisi Pengolahan'],
+            ['description' => 'Operasional produksi dan pengolahan pangan', 'daily_rate' => 75000]
+        );
+        $divDistribusi = Division::updateOrCreate(
+            ['name' => 'Divisi Distribusi'],
+            ['description' => 'Penyaluran dan logistik pangan', 'daily_rate' => 70000]
+        );
+        $divAdmin = Division::updateOrCreate(
+            ['name' => 'Divisi Administrasi'],
+            ['description' => 'Pendataan, inventaris, dan administrasi', 'daily_rate' => 65000]
+        );
 
-        // 3. Jadwal Kerja untuk Tiap Divisi (Senin - Sabtu: 1 s/d 6)
+        // 3. Jadwal Kerja untuk Tiap Divisi (1 jadwal tunggal berlaku setiap hari, day_of_week = NULL)
         $divisions = [$divPengolahan, $divDistribusi, $divAdmin];
         foreach ($divisions as $div) {
-            for ($day = 1; $day <= 6; $day++) {
-                WorkSchedule::updateOrCreate(
-                    [
-                        'division_id' => $div->id,
-                        'day_of_week' => $day,
-                    ],
-                    [
-                        'check_in_start'  => '06:00:00',
-                        'check_in_end'    => '08:30:00',
-                        'check_out_start' => '14:00:00',
-                        'check_out_end'   => '18:00:00',
-                        'late_tolerance'  => 15,
-                    ]
-                );
-            }
+            WorkSchedule::updateOrCreate(
+                [
+                    'division_id' => $div->id,
+                    'day_of_week' => null,
+                ],
+                [
+                    'check_in_start'  => '06:00:00',
+                    'check_in_end'    => '08:30:00',
+                    'check_out_start' => '14:00:00',
+                    'check_out_end'   => '18:00:00',
+                    'late_tolerance'  => 15,
+                ]
+            );
         }
 
         // 4. Skema Gaji Master

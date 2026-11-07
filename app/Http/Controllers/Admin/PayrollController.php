@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\Division;
 use App\Models\LeaveRequest;
 use App\Models\Payroll;
 use App\Models\PayrollDetail;
@@ -14,6 +15,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PayrollController extends Controller
 {
@@ -29,9 +31,50 @@ class PayrollController extends Controller
 
     public function create()
     {
-        return view('admin.payroll.create');
+        $divisions = Division::where('daily_rate', '>', 0)->orderBy('name')->get();
+        return view('admin.payroll.create', compact('divisions'));
     }
 
+    /**
+     * Halaman pengaturan skema honor (transport, makan, lembur) — dapat diakses Admin
+     */
+    public function skemaIndex()
+    {
+        $scheme    = SalaryScheme::where('is_active', true)->first() ?? new SalaryScheme();
+        $divisions = Division::orderBy('name')->get();
+        return view('admin.payroll.skema', compact('scheme', 'divisions'));
+    }
+
+    public function skemaUpdate(Request $request)
+    {
+        $request->validate([
+            'daily_transport'      => 'required|numeric|min:0',
+            'meal_allowance'       => 'required|numeric|min:0',
+            'overtime_hourly_rate' => 'required|numeric|min:0',
+            'late_deduction'       => 'required|numeric|min:0',
+            // Daily rate per divisi
+            'division_rates'       => 'nullable|array',
+            'division_rates.*'     => 'nullable|numeric|min:0',
+        ]);
+
+        // Update skema tunjangan global (sebagai fallback divisi yang belum diatur)
+        $scheme = SalaryScheme::where('is_active', true)->first() ?? new SalaryScheme(['name' => 'Skema Standar Relawan SPPG', 'is_active' => true, 'hourly_rate' => 0]);
+        $scheme->fill([
+            'daily_transport'      => $request->daily_transport,
+            'meal_allowance'       => $request->meal_allowance,
+            'overtime_hourly_rate' => $request->overtime_hourly_rate,
+            'late_deduction'       => $request->late_deduction,
+        ])->save();
+
+        // Update daily_rate + allowances per divisi
+        if ($request->has('division_rates')) {
+            foreach ($request->division_rates as $divId => $rate) {
+                Division::where('id', $divId)->update(['daily_rate' => (float)($rate ?? 0)]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Skema honor & tarif divisi berhasil diperbarui.');
+    }
     public function generate(Request $request)
     {
         $request->validate([
@@ -45,15 +88,19 @@ class PayrollController extends Controller
         $periodEnd   = Carbon::parse($request->period_end)->endOfDay();
         $title       = $request->title ?: 'Payroll Periode ' . $periodStart->translatedFormat('d F Y') . ' s/d ' . $periodEnd->translatedFormat('d F Y');
 
+        // Skema global sebagai fallback jika divisi belum punya daily_rate
         $scheme = SalaryScheme::where('is_active', true)->first() ?? new SalaryScheme([
-            'hourly_rate'          => 15000,
-            'daily_transport'      => 20000,
-            'meal_allowance'       => 15000,
-            'overtime_hourly_rate' => 20000,
-            'late_deduction'       => 5000,
+            'hourly_rate'          => 0,
+            'daily_transport'      => 0,
+            'meal_allowance'       => 0,
+            'overtime_hourly_rate' => 0,
+            'late_deduction'       => 0,
         ]);
 
-        $relawanList = User::where('role', 'relawan')->where('is_active', true)->get();
+        $relawanList = User::where('role', 'relawan')
+            ->where('is_active', true)
+            ->with('division')
+            ->get();
 
         $payroll = Payroll::create([
             'title'           => $title,
@@ -68,7 +115,7 @@ class PayrollController extends Controller
         $totalAllDisbursed = 0;
 
         foreach ($relawanList as $relawan) {
-            // Ambil absensi sah dalam rentang periode
+            // Ambil absensi sah (ada check_in dan check_out) dalam rentang periode
             $attendances = Attendance::where('user_id', $relawan->id)
                 ->whereBetween('date', [$periodStart->toDateString(), $periodEnd->toDateString()])
                 ->whereNotNull('check_in_at')
@@ -76,28 +123,35 @@ class PayrollController extends Controller
                 ->get();
 
             $totalDaysAttended = $attendances->count();
-            $totalHours = (float) $attendances->sum('total_hours');
+            $totalHours        = (float) $attendances->sum('total_hours');
 
-            // Hitung uang makan (jika jam kerja >= 6 jam per hari)
-            $mealDays = $attendances->filter(fn($a) => (float)$a->total_hours >= 6)->count();
-            $mealAllowance = $mealDays * (float)$scheme->meal_allowance;
+            // ── Honor Pokok: pakai daily_rate divisi, fallback ke hourly_rate global ──
+            $divisionDailyRate = (float) ($relawan->division?->daily_rate ?? 0);
+            if ($divisionDailyRate > 0) {
+                // Honor = hari hadir × tarif harian divisi
+                $baseSalary = $totalDaysAttended * $divisionDailyRate;
+            } else {
+                // Fallback: jam kerja × tarif per jam (skema global)
+                $baseSalary = $totalHours * (float) $scheme->hourly_rate;
+            }
 
-            // Hitung lembur (kelebihan jam > 8 jam per hari)
+            // ── Uang Transport (dari divisi, fallback skema global) ──
+            $transportAllowance = $totalDaysAttended * (float)($relawan->division?->daily_transport ?? $scheme->daily_transport);
+
+            // ── Uang Makan: hari dengan jam kerja ≥ 6 jam ──
+            $mealDays      = $attendances->filter(fn($a) => (float)$a->total_hours >= 6)->count();
+            $mealAllowance = $mealDays * (float)($relawan->division?->meal_allowance ?? $scheme->meal_allowance);
+
+            // ── Lembur: jam > 8 per hari ──
             $overtimeHours = 0;
             foreach ($attendances as $a) {
                 if ((float)$a->total_hours > 8) {
                     $overtimeHours += ((float)$a->total_hours - 8);
                 }
             }
-            $overtimePay = $overtimeHours * (float)$scheme->overtime_hourly_rate;
+            $overtimePay = $overtimeHours * (float)($relawan->division?->overtime_hourly_rate ?? $scheme->overtime_hourly_rate);
 
-            // Uang transport
-            $transportAllowance = $totalDaysAttended * (float)$scheme->daily_transport;
-
-            // Honor pokok jam kerja
-            $baseSalary = $totalHours * (float)$scheme->hourly_rate;
-
-            // Hari izin resmi yang disetujui
+            // ── Hari Izin Resmi ──
             $totalDaysLeave = LeaveRequest::where('user_id', $relawan->id)
                 ->where('status', 'approved')
                 ->where(function ($q) use ($periodStart, $periodEnd) {
@@ -106,8 +160,8 @@ class PayrollController extends Controller
                 })
                 ->count();
 
-            $deductions = 0; // Potongan opsional
-            $netSalary = $baseSalary + $transportAllowance + $mealAllowance + $overtimePay - $deductions;
+            $deductions = 0;
+            $netSalary  = $baseSalary + $transportAllowance + $mealAllowance + $overtimePay - $deductions;
 
             $totalAllDisbursed += $netSalary;
 
@@ -148,6 +202,8 @@ class PayrollController extends Controller
         ]);
 
         // Kirim Notifikasi WA ke masing-masing relawan (F-24 PRD 2.0)
+        // Eager load user agar tidak N+1 query
+        $payroll->load('details.user');
         foreach ($payroll->details as $detail) {
             $user = $detail->user;
             $periodStr = Carbon::parse($payroll->period_start)->format('d/m/Y') . ' - ' . Carbon::parse($payroll->period_end)->format('d/m/Y');

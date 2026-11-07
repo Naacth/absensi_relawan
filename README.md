@@ -1,315 +1,260 @@
-<div align="center">
-
-<img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="280" alt="Laravel Logo">
-
 # Sistem Absensi & Payroll Relawan SPPG Curug Cukanggalih 02
 
-**Aplikasi Web Absensi Multi-Lapis (Verifikasi Wajah, Geofencing Haversine, Timestamp Server) & Penggajian Otomatis**
-
-[![Laravel 12](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
-[![PHP 8.2+](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
-[![MySQL 9.x](https://img.shields.io/badge/MySQL-9.x-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
-[![Bootstrap 5.3](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
-[![ARSA Face API](https://img.shields.io/badge/ARSA%20Face%20API-Ready-00C49F?style=for-the-badge)](https://arsa.ai)
-[![Fonnte WA API](https://img.shields.io/badge/Fonnte%20WA%20API-Ready-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://fonnte.com)
-[![Hostinger](https://img.shields.io/badge/Shared%20Hosting-Hostinger%20Ready-673AB7?style=for-the-badge)](https://hostinger.co.id)
-
-</div>
+Aplikasi web absensi dan penggajian (payroll) otomatis untuk relawan SPPG Curug Cukanggalih 02 berbasis **Laravel 12**. Sistem menjamin validitas kehadiran melalui 3 lapis keamanan: **Verifikasi Wajah (ARSA API)**, **Geofencing (Haversine Formula)**, dan **Watermark Foto Server-Side**.
 
 ---
 
-## 📋 Daftar Isi
-1. [Tentang Sistem](#-tentang-sistem)
-2. [Latar Belakang & Masalah](#-latar-belakang--masalah)
-3. [Fitur Unggulan](#-fitur-unggulan)
-4. [Arsitektur Keamanan Multi-Lapis](#-arsitektur-keamanan-multi-lapis)
-5. [Rumus Geofencing Haversine](#-rumus-geofencing-haversine)
-6. [Hak Akses Pengguna (RBAC)](#-hak-akses-pengguna-rbac)
-7. [Akun Bawaan (Default Credentials)](#-akun-bawaan-default-credentials)
-8. [Panduan Instalasi & Menjalankan](#-panduan-instalasi--menjalankan)
-9. [Struktur Direktori Utama](#-struktur-direktori-utama)
-10. [Nilai Akademis (Sempro & Jurnal)](#-nilai-akademis-sempro--jurnal)
+## Stack Teknologi
 
----
-
-## 🌟 Tentang Sistem
-
-**Sistem Absensi & Payroll Relawan SPPG Curug Cukanggalih 02** adalah platform berbasis web modern yang dirancang untuk mengelola kehadiran dan kompensasi relawan secara objektif, transparan, dan bebas manipulasi.
-
-Sistem ini didesain khusus agar dapat dijalankan dengan efisien di lingkungan **Shared Hosting (Hostinger 3GB RAM)** tanpa memerlukan server mahal (VPS/GPU), dengan memanfaatkan arsitektur *API-as-a-Service* (ARSA Face API untuk biometrik dan Fonnte API untuk gateway WhatsApp).
-
----
-
-## ⚠️ Latar Belakang & Masalah
-
-| Masalah Riil di Lapangan | Solusi pada Sistem Ini |
+| Komponen | Teknologi |
 |---|---|
-| **Titip Absen**: Rekan kerja mengabsenkan relawan yang tidak hadir. | **Verifikasi Wajah Biometrik & Liveness Check** memastikan hanya relawan bersangkutan yang dapat absen. |
-| **Absen dari Rumah**: Relawan mengaku sudah di lokasi kerja. | **Geofencing GPS Spasial (Haversine Formula)** dengan radius ketat 100 meter dari titik SPPG. |
-| **Manipulasi Jam**: Relawan mengubah jam di perangkat klien. | **Server Timestamp (`now()`)** acuan tunggal yang tidak terpengaruh jam HP/laptop. |
-| **Ketiadaan Bukti Visual**: Tidak ada dokumentasi fisik kehadiran. | **Server-Side Watermark** permanen memuat Nama, NIK, Waktu, Koordinat, dan Jarak. |
-| **Rekap Honor Manual**: Menghitung jam kerja & uang makan memakan waktu berhari-hari. | **One-Click Payroll Generator & Slip Gaji PDF** otomatis selesai dalam 1 detik. |
+| Backend | Laravel 12, PHP 8.2 |
+| Frontend | Bootstrap 5, Bootstrap Icons, Chart.js |
+| Database | MySQL (production), SQLite (development) |
+| Autentikasi | Laravel Session-based Auth |
+| Verifikasi Wajah | ARSA Face API (mode dummy tersedia) |
+| Notifikasi WA | Fonnte API (mode dummy tersedia) |
+| PDF | barryvdh/laravel-dompdf |
+| Watermark | PHP GD (native, tanpa library eksternal) |
+| Hosting | Shared Hosting ready (Hostinger) |
 
 ---
 
-## ✨ Fitur Unggulan
+## Fitur Utama
 
-### 1. 🛡️ Absensi 4 Lapis Keamanan
-* **WebRTC Camera API**: Pengambilan foto langsung dari kamera browser tanpa perantara upload file statis.
-* **Toggle Flip / Mirror**: Opsi tampilan kamera normal (tidak mirror) atau mode cermin dengan memori preferensi `localStorage`.
-* **HTML5 Geolocation**: Mengunci koordinat latitude dan longitude relawan secara real-time.
-* **Geofencing Haversine**: Mengukur jarak eksak (meter) ke pusat SPPG Curug Cukanggalih 02 (`-6.257737, 106.550030`).
-* **Liveness & Face Verification**: Menguji keaslian wajah dan kecocokan biometrik terhadap wajah terdaftar.
-* **Watermark Otomatis Server-Side**: Menggabungkan data identitas, waktu server, dan koordinat ke foto bukti absensi secara permanen.
+### 3 Lapis Keamanan Absensi
+1. **Verifikasi Wajah + Liveness** — via ARSA Face API, threshold 0.85
+2. **Geofencing Haversine** — radius dikonfigurasi admin (default 100m)
+3. **Server Timestamp** — waktu absensi dari server, tidak bisa dimanipulasi klien
 
-### 2. 💰 Penggajian & Payroll Otomatis (DSS)
-* **Kalkulasi Jam Kerja Eksak**: Total jam kerja dihitung desimal presisi dari selisih `check_in_at` dan `check_out_at`.
-* **Master Skema Honor Dinamis**:
-  * Honor jam kerja (`total_hours × tarif_per_jam`)
-  * Uang transport kehadiran sah per hari
-  * Uang makan harian (untuk kehadiran $\ge$ 6 jam)
-  * Insentif lembur (kelebihan jam kerja > 8 jam/hari)
-  * Potongan keterlambatan
-* **Persetujuan Berjenjang (Draft &rarr; Approved &rarr; Paid)**.
-* **Cetak Slip Gaji PDF Resmi**: Dibuat via `DomPDF` siap cetak/unduh.
-* **Ekspor Excel / CSV**: Format kompatibel untuk pelaporan kas daerah atau transfer bank kolektif.
-
-### 3. 🏢 Manajemen Divisi & Jadwal Fleksibel
-* Relawan terorganisir per divisi: **Pengolahan**, **Distribusi**, dan **Administrasi**.
-* Jam operasional masuk, batas akhir masuk, dan batas jam pulang dapat diatur berbeda untuk tiap divisi per hari (Senin–Sabtu).
-* Pengaturan toleransi keterlambatan dalam menit.
-
-### 4. 📝 Pengajuan Izin / Sakit / Cuti Online
-* Relawan mengunggah surat dokter / bukti pendukung langsung dari dashboard.
-* Pengurus dapat menyetujui (*Approve*) atau menolak (*Reject*) dengan catatan.
-* Izin sah tidak dihitung *alpha* (mangkir) pada laporan rekapitulasi penggajian.
-
-### 5. 📲 WhatsApp Gateway Terintegrasi (Fonnte API)
-* Notifikasi otomatis penerbitan slip honorarium saat payroll disetujui.
-* Pengingat absensi H-15 menit sebelum batas waktu masuk berakhir.
-* Peringatan instan (*Fraud Alert*) ke WhatsApp Admin jika terdeteksi 3x kegagalan berturut-turut.
-
-### 6. 🔍 Deteksi Anomali & Kecurangan (Fraud Detection)
-* Memantau penggunaan IP Address ganda untuk relawan berbeda dalam rentang waktu singkat.
-* Mencatat seluruh log percobaan gagal lengkap dengan alasan (*out_of_radius*, *face_mismatch*, *outside_schedule*, dll).
+### Modul yang Tersedia
+- ✅ Autentikasi 3 role: Super Admin, Admin, Relawan
+- ✅ Enrollment wajah relawan
+- ✅ Absensi masuk & pulang (wajah + GPS)
+- ✅ Watermark foto server-side (nama, NIK, divisi, waktu, koordinat, jarak)
+- ✅ Manajemen divisi & jadwal kerja (1 jadwal tunggal per divisi, berlaku semua hari)
+- ✅ Komponen honor per divisi (honor harian, transport, uang makan, lembur, potongan)
+- ✅ Pengajuan izin / sakit / cuti + upload lampiran
+- ✅ Generate payroll otomatis per periode
+- ✅ Approve payroll + notifikasi WA slip gaji ke relawan
+- ✅ Download slip gaji PDF per relawan
+- ✅ Export rekap payroll ke CSV
+- ✅ Laporan kehadiran bulanan (export PDF & Excel/CSV)
+- ✅ Dashboard admin dengan grafik tren 7 hari & fraud detection
+- ✅ Audit log semua percobaan absensi (berhasil & gagal)
+- ✅ Alert WA admin saat relawan gagal absen 3x berturut-turut
 
 ---
 
-## 📐 Arsitektur Keamanan Multi-Lapis
+## Struktur Role & Akses
 
-```text
-[ Browser Relawan ]
-   │
-   ├── 1. Akses WebRTC Kamera (Snapshot Wajah)
-   ├── 2. HTML5 Geolocation (Lat & Lng Relawan)
-   │
-   ▼ (Kirim Data via HTTPS POST)
-[ Laravel 12 Backend - Shared Hosting ]
-   │
-   ├── 3. Validasi Geofencing Spasial (Haversine Formula)
-   │      Jarak <= 100 Meter? ──(Tidak)──> Tolak (out_of_radius) & Simpan Log
-   │      │ (Ya)
-   ├── 4. Validasi Jadwal Divisi
-   │      Sesuai Jam Operasional? ──(Tidak)──> Tolak (outside_schedule) & Simpan Log
-   │      │ (Ya)
-   ├── 5. ARSA Face API (atau Mode Dummy)
-   │      Skor >= 0.85 & Liveness True? ──(Tidak)──> Tolak (face_mismatch) & Alert WA
-   │      │ (Ya)
-   ├── 6. PHP GD Watermark Processor
-   │      Bakar teks: Nama, NIK, Divisi, Server Time, GPS Lat/Lng & Jarak ke foto
-   │
-   ▼
-[ Database MySQL ]
-   ├── Simpan record attendances (check_in_at, distance_m, photo_path)
-   └── Audit trail attendance_logs (Status: Success)
-   │
-   ▼
-[ Akhir Bulan: Modul Payroll Otomatis ]
-   └── Hitung Total Jam, Transport, Uang Makan ──> Terbitkan Slip PDF & Notif WA
-```
-
----
-
-## 🧮 Rumus Geofencing Haversine
-
-Jarak lengkung bumi dihitung langsung di backend menggunakan formula:
-
-```math
-d = 2r \arcsin\left(\sqrt{\sin^2\left(\frac{\Delta\phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta\lambda}{2}\right)}\right)
-```
-
-> **Keterangan:**
-> - $r = 6.371.000\text{ meter}$ (jari-jari bumi)
-> - $\phi_1, \phi_2$ = Latitude titik awal dan titik tujuan (dalam radian)
-> - $\Delta\phi$ = Selisih latitude $(\phi_2 - \phi_1)$
-> - $\Delta\lambda$ = Selisih longitude $(\lambda_2 - \lambda_1)$
-
----
-
-## 👥 Hak Akses Pengguna (RBAC)
-
-| Menu / Fitur | Super Admin | Admin | Relawan |
+| Fitur | Super Admin | Admin | Relawan |
 |---|:---:|:---:|:---:|
-| **Dashboard Statistik & Log Fraud** | ✅ | ✅ | ❌ |
-| **Pengaturan Geofencing & API Key** | ✅ | ❌ | ❌ |
-| **Pengaturan Master Skema Gaji** | ✅ | ❌ | ❌ |
-| **Manajemen Divisi & Jam Kerja** | ✅ | ✅ | ❌ |
-| **Manajemen Relawan & Reset Wajah** | ✅ | ✅ | ❌ |
-| **Verifikasi Permohonan Izin / Sakit** | ✅ | ✅ | ❌ |
-| **Generate & Draft Payroll** | ✅ | ✅ | ❌ |
-| **Approve & Finalisasi Payroll** | ✅ | ✅ | ❌ |
-| **Ekspor CSV / Excel Keuangan** | ✅ | ✅ | ❌ |
-| **Absensi Wajah + GPS Geofencing** | ❌ | ❌ | ✅ |
-| **Pendaftaran Wajah (Enrollment)** | ❌ | ❌ | ✅ |
-| **Mengajukan Izin / Sakit Online** | ❌ | ❌ | ✅ |
-| **Unduh Slip Honorarium PDF Pribadi** | ❌ | ❌ | ✅ |
+| Konfigurasi Sistem (koordinat, API key, radius) | ✅ | ❌ | ❌ |
+| Manajemen User | ✅ | ✅ | ❌ |
+| Manajemen Divisi & Jadwal & Honor | ✅ | ✅ | ❌ |
+| Approve Izin | ✅ | ✅ | ❌ |
+| Generate & Approve Payroll | ✅ | ✅ | ❌ |
+| Laporan Kehadiran | ✅ | ✅ | ❌ |
+| Absensi (Wajah & GPS) | ❌ | ❌ | ✅ |
+| Pengajuan Izin | ❌ | ❌ | ✅ |
+| Lihat & Download Slip Gaji | ❌ | ❌ | ✅ |
 
 ---
 
-## 🔑 Akun Bawaan (Default Credentials)
+## Instalasi
 
-Semua akun berikut sudah di-seed otomatis ke dalam database:
+### Prasyarat
+- PHP >= 8.2
+- Composer
+- MySQL
+- Extension PHP: GD, cURL, mbstring, xml
 
-| Email Akun | Password | Role | Penugasan / Divisi |
-|---|---|---|---|
-| **`superadmin@sppg.local`** | `superadmin123` | `super_admin` | Akses Penuh & Pengaturan Sistem |
-| **`admin@sppg.local`** | `admin123` | `admin` | Admin Operasional & Payroll |
-| **`siti@sppg.local`** | `relawan123` | `relawan` | Divisi Pengolahan |
-| **`budi@sppg.local`** | `relawan123` | `relawan` | Divisi Distribusi |
-| **`rina@sppg.local`** | `relawan123` | `relawan` | Divisi Administrasi |
+### Langkah Instalasi
 
----
+```bash
+# 1. Clone / extract project
+cd Absensi_vermuk
 
-## 🛠️ Panduan Instalasi & Menjalankan
+# 2. Install dependencies
+composer install
 
-### Prasyarat Sistem
-* PHP $\ge$ 8.2 (dengan ekstensi `pdo_mysql`, `gd`, `fileinfo`, `curl`, `mbstring`)
-* Composer $\ge$ 2.x
-* MySQL Server $\ge$ 8.0 atau 9.x
-* Browser modern (Chrome, Edge, Firefox) dengan izin Kamera dan Lokasi
+# 3. Copy environment
+cp .env.example .env
 
-### Langkah Setup
+# 4. Generate app key
+php artisan key:generate
 
-1. **Clone atau Buka Direktori Proyek**:
-   ```bash
-   git clone https://github.com/Naacth/absensi_relawan.git
-   cd absensi_relawan
-   ```
+# 5. Konfigurasi database di .env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=absensisppg
+DB_USERNAME=root
+DB_PASSWORD=your_password
 
-2. **Pasang Dependensi PHP**:
-   ```bash
-   composer install
-   ```
+# 6. Jalankan migration + seeder
+php artisan migrate --seed
 
-3. **Konfigurasi Environment (`.env`)**:
-   Salin file `.env.example` ke `.env`, lalu atur database Anda:
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=absensisppg
-   DB_USERNAME=root
-   DB_PASSWORD=your_password
+# 7. Buat symlink storage
+php artisan storage:link
 
-   # Konfigurasi Geofencing & API
-   SPPG_NAME="SPPG CURUG (Drijaya Wahana Perkasa)"
-   SPPG_LATITUDE=-6.257737
-   SPPG_LONGITUDE=106.550030
-   GEOFENCE_RADIUS_METERS=100
-
-   # Mode Dummy (Aman untuk Demo/Sidang tanpa internet/kuota API)
-   FACE_API_MODE=dummy
-   FONNTE_API_MODE=dummy
-   ```
-
-4. **Jalankan Migrasi & Seeder**:
-   ```bash
-   php artisan migrate --seed
-   ```
-
-5. **Hubungkan Storage Symlink**:
-   ```bash
-   php artisan storage:link
-   ```
-
-6. **Jalankan Server Lokal**:
-   ```bash
-   php artisan serve
-   ```
-   Buka peramban di `http://127.0.0.1:8000`.
-
----
-
-## 📂 Struktur Direktori Utama
-
-```text
-Absensi_vermuk/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── AuthController.php               # Login & Logout Sanctum
-│   │   │   ├── Admin/
-│   │   │   │   ├── DashboardController.php      # Monitoring & Fraud Alert
-│   │   │   │   ├── DivisionController.php       # Manajemen Divisi & Jadwal
-│   │   │   │   ├── LeaveRequestController.php   # Persetujuan Izin/Sakit
-│   │   │   │   ├── PayrollController.php        # Generate Gaji, Slip PDF, CSV
-│   │   │   │   ├── RelawanController.php        # CRUD Relawan & Reset Wajah
-│   │   │   │   └── SettingController.php        # Konfigurasi Geofencing & Gaji
-│   │   │   └── Relawan/
-│   │   │       ├── AbsensiController.php        # Validasi Wajah, GPS & Watermark
-│   │   │       ├── DashboardController.php      # Status Kehadiran Relawan
-│   │   │       ├── EnrollmentController.php     # Pendaftaran Wajah Pertama Kali
-│   │   │       ├── LeaveRequestController.php   # Pengajuan Izin Online
-│   │   │       └── PayrollController.php        # Riwayat & Unduh Slip PDF
-│   │   └── Middleware/
-│   │       └── RoleMiddleware.php               # Proteksi Role Tiga Tingkat
-│   ├── Models/
-│   │   ├── Attendance.php                       # Model Kehadiran & Jam Kerja
-│   │   ├── AttendanceLog.php                    # Audit Trail Percobaan Absen
-│   │   ├── Division.php                         # Master Divisi
-│   │   ├── FaceEmbedding.php                    # Data Biometrik Terenkripsi
-│   │   ├── LeaveRequest.php                     # Permohonan Izin/Cuti
-│   │   ├── Payroll.php                          # Periode Penggajian
-│   │   ├── PayrollDetail.php                    # Rincian Gaji Relawan
-│   │   ├── SalaryScheme.php                     # Master Tarif Honorarium
-│   │   ├── Setting.php                          # Pengaturan Sistem
-│   │   ├── User.php                             # Model Pengguna & Role
-│   │   └── WorkSchedule.php                     # Jam Kerja Divisi
-│   └── Services/
-│       ├── FaceRecognitionService.php           # Integrasi ARSA API & Dummy
-│       ├── GeofenceService.php                  # Perhitungan Haversine Formula
-│       ├── WatermarkService.php                 # Image Processing Watermark GD
-│       └── WhatsAppService.php                  # Integrasi Fonnte API Gateway
-├── database/
-│   ├── migrations/                              # Skema Tabel Database
-│   └── seeders/
-│       └── InitialSystemSeeder.php              # Akun & Data Awal Lengkap
-├── resources/views/
-│   ├── layouts/                                 # Layout Bootstrap 5 & Sidebar
-│   ├── admin/                                   # Halaman Dashboard, Payroll, Divisi
-│   ├── relawan/                                 # Halaman Absensi, Izin, Slip
-│   └── auth/                                    # Halaman Login
-└── routes/
-    └── web.php                                  # 45 Rute Lengkap Terproteksi
+# 8. Jalankan server
+php artisan serve
 ```
 
 ---
 
-## 🎓 Nilai Akademis (Sempro & Jurnal)
+## Konfigurasi .env Penting
 
-Aplikasi ini dirancang memenuhi kaidah rekayasa perangkat lunak dan metodologi penelitian ilmiah:
+```env
+# Mode development — bypass validasi jadwal (false = bebas absen kapanpun)
+SCHEDULE_CHECK=false
 
-1. **Multi-Layer Authentication Methodology**:
-   Kombinasi verifikasi biometrik (*Face Recognition*), uji keaktifan (*Liveness Detection*), verifikasi posisi spasial (*Geofencing Haversine*), dan penjaminan waktu mutlak (*Server Timestamp*).
-2. **Immutable Visual Evidence**:
-   Penerapan cap digital server-side sebagai bukti forensik digital kehadiran yang tidak dapat dimanipulasi dari sisi klien.
-3. **Decision Support & Financial Automation**:
-   Integrasi langsung antara data mentah kehadiran menjadi laporan penggajian dan slip honorarium digital siap audit.
-4. **Cost-Effective Distributed Architecture**:
-   Membuktikan bahwa teknologi kecerdasan buatan dan notifikasi pesan instan dapat diimplementasikan pada infrastruktur berbiaya terjangkau (*Shared Hosting*) melalui pendekatan *API-as-a-Service*.
+# ARSA Face API (dummy = tidak pakai kuota, real = gunakan API asli)
+FACE_API_MODE=dummy
+ARSA_API_KEY=
+
+# Fonnte WhatsApp API (dummy = log saja, real = kirim WA sungguhan)
+FONNTE_API_MODE=dummy
+FONNTE_API_TOKEN=
+
+# Koordinat SPPG (bisa diubah via Pengaturan Sistem)
+SPPG_LATITUDE=-6.2577369
+SPPG_LONGITUDE=106.5500299
+GEOFENCE_RADIUS_METERS=100
+```
+
+> **Sebelum demo/sidang:** ubah `FACE_API_MODE=real`, `FONNTE_API_MODE=real`, dan `SCHEDULE_CHECK=true`
 
 ---
 
-<div align="center">
-  Dikembangkan untuk <strong>SPPG Curug Cukanggalih 02</strong> &bull; 2026
-</div>
+## Akun Default (Seeder)
+
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | superadmin@sppg.local | superadmin123 |
+| Admin | admin@sppg.local | admin123 |
+| Relawan 1 | siti@sppg.local | relawan123 |
+| Relawan 2 | budi@sppg.local | relawan123 |
+| Relawan 3 | rina@sppg.local | relawan123 |
+
+---
+
+## Struktur Database
+
+| Tabel | Keterangan |
+|---|---|
+| `users` | Data user semua role |
+| `divisions` | Divisi + jadwal + **semua komponen honor** (daily_rate, daily_transport, meal_allowance, overtime_hourly_rate, late_deduction) |
+| `work_schedules` | Jadwal kerja per divisi (1 record NULL = berlaku semua hari) |
+| `face_embeddings` | Embedding wajah terenkripsi |
+| `attendances` | Data absensi masuk & pulang |
+| `attendance_logs` | Audit log semua percobaan absensi |
+| `leave_requests` | Pengajuan izin / sakit / cuti |
+| `payrolls` | Header payroll per periode |
+| `payroll_details` | Detail honor per relawan per payroll |
+| `salary_schemes` | Skema fallback global (jika divisi belum diatur) |
+| `settings` | Konfigurasi sistem (koordinat, radius, API keys) |
+
+---
+
+## Kalkulasi Honor Payroll
+
+```
+Honor Pokok    = daily_rate (divisi) × Hari Hadir
+Transport      = daily_transport (divisi) × Hari Hadir
+Uang Makan     = meal_allowance (divisi) × Hari dengan jam kerja ≥ 6 jam
+Lembur         = overtime_hourly_rate (divisi) × Total jam > 8/hari
+Potongan       = late_deduction (divisi) × Jumlah keterlambatan
+─────────────────────────────────────────────────────────────────
+Total Bersih   = Honor Pokok + Transport + Uang Makan + Lembur - Potongan
+```
+
+Semua komponen honor dikonfigurasi **per divisi** di halaman **Divisi & Jadwal → Edit Divisi**.
+
+---
+
+## Routes Utama
+
+### Admin (`/admin/*`)
+| Method | URL | Keterangan |
+|---|---|---|
+| GET | `/admin/dashboard` | Dashboard & statistik |
+| GET/POST | `/admin/divisions` | Manajemen divisi |
+| GET/PUT | `/admin/divisions/{id}/edit` | Edit divisi, jadwal, & honor |
+| GET | `/admin/relawan` | Daftar relawan |
+| GET | `/admin/izin` | Permohonan izin |
+| GET | `/admin/payroll` | Daftar payroll |
+| GET | `/admin/payroll/generate` | Form generate payroll |
+| POST | `/admin/payroll/generate` | Proses generate payroll |
+| GET | `/admin/payroll/{id}` | Detail payroll |
+| PATCH | `/admin/payroll/{id}/approve` | Approve + kirim WA |
+| GET | `/admin/payroll/{id}/export-csv` | Export CSV |
+| GET | `/admin/payroll/slip/{detail}/pdf` | Download slip PDF |
+| GET | `/admin/laporan` | Laporan kehadiran |
+| GET | `/admin/laporan/export-pdf` | Export PDF laporan |
+| GET | `/admin/laporan/export-excel` | Export CSV laporan |
+| GET/POST | `/admin/pengaturan` | Pengaturan sistem (Super Admin only) |
+
+### Relawan (`/relawan/*`)
+| Method | URL | Keterangan |
+|---|---|---|
+| GET | `/relawan/dashboard` | Dashboard relawan |
+| GET/POST | `/relawan/enrollment` | Pendaftaran wajah |
+| GET/POST | `/relawan/absensi` | Halaman & proses absensi |
+| GET/POST | `/relawan/izin` | Pengajuan izin |
+| GET | `/relawan/payroll` | Daftar slip honor |
+| GET | `/relawan/payroll/slip/{id}` | Download slip PDF |
+
+---
+
+## Cara Penggunaan
+
+### Alur Admin
+1. Login sebagai Admin
+2. **Divisi & Jadwal** → Tambah divisi → isi **Honor Harian, Transport, Uang Makan, Lembur**
+3. **Data Relawan** → Tambah relawan → assign ke divisi
+4. Relawan enrollment wajah & mulai absensi
+5. **Payroll & Honor** → Generate Payroll → pilih periode → Kalkulasi
+6. Review draft → **Approve & Kirim WA** → relawan terima notifikasi WA
+7. Setelah transfer → **Tandai Lunas**
+
+### Alur Relawan
+1. Login → **Daftarkan Wajah** (enrollment)
+2. Buka **Absensi** → izinkan kamera & GPS
+3. Klik **Absen Masuk** → wajah + GPS diverifikasi → foto berwatermark tersimpan
+4. Setelah jam kerja → **Absen Pulang**
+5. Lihat slip honor di **Slip Honor Saya**
+
+---
+
+## Mitigasi untuk Shared Hosting
+
+| Masalah | Solusi |
+|---|---|
+| Kuota ARSA (100/bln) habis saat testing | `FACE_API_MODE=dummy` di .env, ganti ke `real` H-1 sidang |
+| Timeout upload foto | Set `max_execution_time=120` & `upload_max_filesize=10M` di PHP config hPanel |
+| GPS tidak akurat di dalam gedung | Naikkan radius geofencing via Pengaturan Sistem |
+
+---
+
+## Changelog
+
+### v2.0 (November 2026)
+- Refactor jadwal kerja: dari 6 jadwal/hari menjadi 1 jadwal tunggal per divisi
+- Honor per divisi: tambah kolom `daily_rate`, `daily_transport`, `meal_allowance`, `overtime_hourly_rate`, `late_deduction` di tabel `divisions`
+- Semua komponen honor kini dikonfigurasi langsung di halaman Edit Divisi
+- Hapus menu "Skema Honor" terpisah di sidebar
+- Tambah grafik tren 7 hari (Chart.js) di dashboard admin
+- Tambah export laporan kehadiran ke PDF & CSV
+- Tambah rate limiting: login (5 req/menit), absensi (10 req/menit)
+- Fix: `use Illuminate\Support\Str` missing di PayrollController
+- Fix: N+1 query di approve payroll
+- Fix: WhatsApp alert hanya dikirim tepat di percobaan gagal ke-3
+- Fix: Relawan tanpa divisi tidak bisa absen
+- Fix: Migration kompatibel SQLite & MySQL
+- Tambah `SCHEDULE_CHECK=false` di .env untuk bypass validasi jadwal saat development
+
+### v1.0 (November 2026)
+- Initial release: absensi wajah + GPS, watermark, payroll, izin, notifikasi WA

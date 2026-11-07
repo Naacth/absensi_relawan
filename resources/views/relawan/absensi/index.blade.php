@@ -26,7 +26,11 @@
     <i class="bi bi-calendar-check me-1"></i>
     <strong>Jadwal Divisi {{ $user->division->name }} Hari Ini:</strong>
     Masuk: <strong>{{ substr($schedule->check_in_start, 0, 5) }} - {{ substr($schedule->check_in_end, 0, 5) }} WIB</strong> &bull;
-    Pulang: setelah <strong>{{ substr($schedule->check_out_start, 0, 5) }} WIB</strong> (Toleransi telat: {{ $schedule->late_tolerance }} mnt)
+    Pulang: setelah <strong>{{ substr($schedule->check_out_start, 0, 5) }} WIB</strong>
+    (Toleransi telat: {{ $schedule->late_tolerance }} mnt)
+    @if(!env('SCHEDULE_CHECK', true))
+        &bull; <span class="badge bg-warning text-dark"><i class="bi bi-unlock me-1"></i>Mode Dev: Jadwal tidak dibatasi</span>
+    @endif
 </div>
 @endif
 

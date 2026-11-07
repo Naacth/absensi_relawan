@@ -64,6 +64,21 @@
     </div>
 </div>
 
+<div class="row g-3 mb-4">
+    {{-- Grafik Tren Kehadiran 7 Hari --}}
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-bar-chart-line me-1 text-primary"></i> Tren Kehadiran 7 Hari Terakhir</span>
+                <span class="badge bg-primary-subtle text-primary border">Grafik Realtime</span>
+            </div>
+            <div class="card-body">
+                <canvas id="trenChart" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-3">
     {{-- Tabel Absensi Masuk Hari Ini --}}
     <div class="col-lg-8">
@@ -164,3 +179,61 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    const trenData = @json($tren);
+
+    const labels  = trenData.map(d => {
+        const date = new Date(d.tanggal);
+        return date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+    });
+    const values  = trenData.map(d => d.hadir);
+    const maxVal  = Math.max(...values, 1);
+
+    const ctx = document.getElementById('trenChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Hadir',
+                data: values,
+                backgroundColor: values.map((v, i) =>
+                    i === values.length - 1 ? 'rgba(37, 99, 235, 0.85)' : 'rgba(37, 99, 235, 0.35)'
+                ),
+                borderColor: 'rgba(37, 99, 235, 1)',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${ctx.parsed.y} relawan hadir`
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: Math.ceil(maxVal * 1.3) || 5,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0,
+                    },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+@endpush
