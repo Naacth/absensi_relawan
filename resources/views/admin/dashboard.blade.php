@@ -114,6 +114,9 @@
                             </td>
                             <td>
                                 <span class="fw-bold text-success">{{ $a->check_in_at?->format('H:i:s') }}</span>
+                                @if($a->is_manual)
+                                    <span class="badge bg-warning text-dark ms-1 small">Manual</span>
+                                @endif
                             </td>
                             <td>
                                 @if($a->check_in_score)

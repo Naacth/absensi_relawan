@@ -26,6 +26,9 @@ class Attendance extends Model
         'distance_out_m',
         'photo_check_out_path',
         'total_hours',
+        'is_manual',
+        'manual_by',
+        'manual_note',
     ];
 
     protected function casts(): array
@@ -43,6 +46,7 @@ class Attendance extends Model
             'check_out_lng'     => 'decimal:7',
             'distance_out_m'    => 'decimal:2',
             'total_hours'       => 'decimal:2',
+            'is_manual'         => 'boolean',
         ];
     }
 

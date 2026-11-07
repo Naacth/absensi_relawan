@@ -29,6 +29,11 @@
             <i class="bi bi-file-earmark-bar-graph me-2"></i>Laporan Rekap
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.absensi-manual.*') ? 'active' : '' }}" href="{{ route('admin.absensi-manual.index') }}">
+            <i class="bi bi-pencil-square me-2"></i>Absensi Manual
+        </a>
+    </li>
 
     @if(auth()->user()->isSuperAdmin())
     <li class="nav-item mt-2">

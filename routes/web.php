@@ -64,6 +64,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.exportPdf');
     Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.exportExcel');
+
+    // Absensi Manual oleh Admin
+    Route::get('/absensi-manual',              [\App\Http\Controllers\Admin\AbsensiManualController::class, 'index'])->name('absensi-manual.index');
+    Route::post('/absensi-manual',             [\App\Http\Controllers\Admin\AbsensiManualController::class, 'store'])->name('absensi-manual.store');
+    Route::delete('/absensi-manual/{attendance}', [\App\Http\Controllers\Admin\AbsensiManualController::class, 'destroy'])->name('absensi-manual.destroy');
 });
 
 // ─── Relawan ──────────────────────────────────────────────────
