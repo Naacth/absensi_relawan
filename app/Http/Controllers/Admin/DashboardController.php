@@ -8,7 +8,6 @@ use App\Models\AttendanceLog;
 use App\Models\LeaveRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -47,18 +46,9 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        // Deteksi Anomali: IP address yang sama digunakan oleh lebih dari 1 user dalam 24 jam terakhir
-        $anomaliIp = AttendanceLog::select('ip_address', DB::raw('COUNT(DISTINCT user_id) as user_count'))
-            ->whereNotNull('user_id')
-            ->whereNotNull('ip_address')
-            ->where('created_at', '>=', now()->subDay())
-            ->groupBy('ip_address')
-            ->having('user_count', '>', 1)
-            ->get();
-
         return view('admin.dashboard', compact(
             'totalRelawan', 'hadirHariIni', 'izinHariIni', 'belumAbsen', 'persentaseHadir',
-            'absenHariIni', 'tren', 'logGagal', 'anomaliIp'
+            'absenHariIni', 'tren', 'logGagal'
         ));
     }
 }

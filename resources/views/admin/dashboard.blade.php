@@ -16,22 +16,6 @@
     </span>
 </div>
 
-{{-- Anomali Fraud Warning jika ada --}}
-@if($anomaliIp->count() > 0)
-<div class="alert alert-warning border-warning shadow-sm mb-4">
-    <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-octagon-fill fs-3 text-danger me-3"></i>
-        <div>
-            <div class="fw-bold text-dark">Deteksi Anomali Jaringan (Potential Fraud Alert)</div>
-            <div class="small text-secondary">
-                Ditemukan {{ $anomaliIp->count() }} IP Address yang digunakan oleh lebih dari 1 relawan berbeda dalam kurun 24 jam terakhir. 
-                Hal ini dapat mengindikasikan 1 perangkat digunakan bersamaan untuk titip absen.
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-
 {{-- Kartu Statistik Kehadiran --}}
 <div class="row g-3 mb-4">
     <div class="col-md-3">
