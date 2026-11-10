@@ -18,6 +18,12 @@ use Illuminate\Support\Facades\Route;
 // ─── Redirect root ───────────────────────────────────────────
 Route::get('/', fn() => redirect()->route('login'));
 
+// ─── Storage file server (untuk shared hosting tanpa symlink support) ────
+Route::get('/storage-file/{path}', [\App\Http\Controllers\StorageController::class, 'serve'])
+    ->where('path', '.*')
+    ->middleware('auth')
+    ->name('storage.file');
+
 // ─── Auth ─────────────────────────────────────────────────────
 Route::get('/login',   [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login',  [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');

@@ -74,7 +74,7 @@
                     </td>
                     <td>
                         @if($req->attachment_path)
-                            <a href="{{ asset('storage/' . $req->attachment_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2">
+                            <a href="{{ storage_url($req->attachment_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2">
                                 <i class="bi bi-paperclip me-1"></i>Lihat Bukti
                             </a>
                         @else

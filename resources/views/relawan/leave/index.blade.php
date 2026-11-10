@@ -46,7 +46,7 @@
                     <td class="text-start" style="max-width: 200px;">{{ $l->reason }}</td>
                     <td>
                         @if($l->attachment_path)
-                            <a href="{{ asset('storage/' . $l->attachment_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2">
+                            <a href="{{ storage_url($l->attachment_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2">
                                 <i class="bi bi-paperclip me-1"></i>Lihat
                             </a>
                         @else -

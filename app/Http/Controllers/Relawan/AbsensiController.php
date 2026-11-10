@@ -176,7 +176,7 @@ class AbsensiController extends Controller
         return response()->json([
             'success'   => true,
             'message'   => "Absen {$label} berhasil dicatat pukul " . $serverNow->format('H:i:s') . " WIB (Jarak: {$distance}m).",
-            'photo_url' => asset('storage/' . $watermarkedPath),
+            'photo_url' => storage_url($watermarkedPath),
             'time'      => $serverNow->toDateTimeString(),
         ]);
     }

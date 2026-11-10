@@ -112,7 +112,7 @@
                             <td><span class="badge bg-light text-dark border">{{ $r->total_hours ? $r->total_hours . ' jam' : '-' }}</span></td>
                             <td>
                                 @if($r->photo_check_in_path)
-                                    <a href="{{ asset('storage/' . $r->photo_check_in_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2">
+                                    <a href="{{ storage_url($r->photo_check_in_path) }}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2">
                                         <i class="bi bi-image"></i>
                                     </a>
                                 @else -
